@@ -10,7 +10,7 @@ import Report from "./pages/Report";
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/leaseguard">
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
