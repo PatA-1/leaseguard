@@ -1,0 +1,65 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id         Int        @id @default(autoincrement())
+  email      String     @unique
+  password   String
+  createdAt  DateTime   @default(now())
+  properties Property[]
+}
+
+model Property {
+  id             Int       @id @default(autoincrement())
+  name           String
+  address        String
+  inspectionType String    @default("CHECKIN") // CHECKIN | CHECKOUT
+  moveInDate     DateTime?
+  depositAmount  Float?
+  depositScheme  String?
+  landlordName   String?
+  createdAt      DateTime  @default(now())
+  userId         Int
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  rooms          Room[]
+}
+
+model Room {
+  id         Int      @id @default(autoincrement())
+  name       String
+  createdAt  DateTime @default(now())
+  propertyId Int
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  images     Image[]
+}
+
+model Image {
+  id          Int          @id @default(autoincrement())
+  url         String
+  caption     String? // overall condition note for the photo
+  createdAt   DateTime     @default(now())
+  roomId      Int
+  room        Room         @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  annotations Annotation[]
+}
+
+model Annotation {
+  id        Int      @id @default(autoincrement())
+  x         Float
+  y         Float
+  note      String
+  severity  String
+  createdAt DateTime @default(now())
+  imageId   Int
+  image     Image    @relation(fields: [imageId], references: [id], onDelete: Cascade)
+}
